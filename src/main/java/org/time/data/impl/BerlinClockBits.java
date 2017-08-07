@@ -5,7 +5,8 @@ import org.time.data.Bits;
 import java.util.BitSet;
 
 /**
- * Created by mindw on 07.08.2017.
+ * Created by ashamsutdinov on 07.08.2017.
+ * Simple implementation of Berlin Clock bits representation.
  */
 public class BerlinClockBits implements Bits<BitSet> {
 
