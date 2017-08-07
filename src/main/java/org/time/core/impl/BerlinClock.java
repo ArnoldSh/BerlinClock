@@ -98,10 +98,15 @@ public class BerlinClock implements TimeCode<BitSet> {
      * @throws TimeDecodingException if input BitSet is invalid and not supports BerlinClock's format
      */
     public String decodeTime(Bits<BitSet> bits) throws TimeDecodingException {
-        BitSet bitSet = bits.get();
+
+        String bBits = bits.toBinaryString();
+        int hoursBitsX5 = bBits.substring(1, 5).replaceAll("0", "").length();
+        int hoursBitsX1 = bBits.substring(5, 9).replaceAll("0", "").length();
+        int minutesBitsX5 = bBits.substring(9, 20).replaceAll("0", "").length();
+        int minutesBitsX1 = bBits.substring(20, 24).replaceAll("0", "").length();
         try {
-            int h = bitSet.get(1, 5).cardinality() * 5 + bitSet.get(5, 9).cardinality();
-            int m = bitSet.get(9, 20).cardinality() * 5 + bitSet.get(20, 24).cardinality();
+            int h = hoursBitsX5 * 5 + hoursBitsX1;
+            int m = minutesBitsX5 * 5 + minutesBitsX1;
             return String.format("%02d", h) + ":" + String.format("%02d", m);
         } catch(IndexOutOfBoundsException e) {
             throw new TimeEncodingException("Input BitSet is invalid - bit set is not supports BerlinClock's format");

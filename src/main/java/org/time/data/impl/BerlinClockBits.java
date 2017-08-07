@@ -17,16 +17,6 @@ public class BerlinClockBits implements Bits<BitSet> {
     }
 
     @Override
-    public void set(BitSet bits) {
-        this.data = bits;
-    }
-
-    @Override
-    public BitSet get() {
-        return this.data;
-    }
-
-    @Override
     public boolean[] toBooleanBits() {
         boolean[] booleanBits = new boolean[24];
         for(int i = 0; i < 24; i++) {

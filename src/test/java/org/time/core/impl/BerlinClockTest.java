@@ -39,22 +39,24 @@ public class BerlinClockTest {
             traceStream.println("expected minutes = " + m);
 
             Bits<BitSet> bits = instance.encodeTime(h, m, s);
-    
-            BitSet hoursBitsX5  = bits.get().get(1, 5);
-            BitSet hoursBitsX1  = bits.get().get(5, 9);
-            BitSet minutesBitsX5 = bits.get().get(9, 20);
-            BitSet minutesBitsX1 = bits.get().get(20, 24);
+
+            String bBits = bits.toBinaryString();
+
+            int hoursBitsX5  = bBits.substring(1, 5).replaceAll("0", "").length();
+            int hoursBitsX1  = bBits.substring(5, 9).replaceAll("0", "").length();
+            int minutesBitsX5 = bBits.substring(9, 20).replaceAll("0", "").length();
+            int minutesBitsX1 = bBits.substring(20, 24).replaceAll("0", "").length();
     
             // check hours
-            traceStream.println("result hours = " + (hoursBitsX5.cardinality() * 5 + hoursBitsX1.cardinality()));
-            assertTrue( (hoursBitsX5.cardinality() * 5 + hoursBitsX1.cardinality()) == h);
+            traceStream.println("result hours = " + (hoursBitsX5 * 5 + hoursBitsX1));
+            assertTrue( (hoursBitsX5 * 5 + hoursBitsX1) == h);
     
             // check minutes
-            traceStream.println("result minutes = " + (minutesBitsX5.cardinality() * 5 + minutesBitsX1.cardinality()));
-            assertTrue( (minutesBitsX5.cardinality() * 5 + minutesBitsX1.cardinality()) == m);
+            traceStream.println("result minutes = " + (minutesBitsX5 * 5 + minutesBitsX1));
+            assertTrue( (minutesBitsX5 * 5 + minutesBitsX1) == m);
 
             // check seconds <=> just a parity of seconds
-            assertTrue(bits.get().get(0) == (s % 2 == 1));
+            assertTrue(bBits.substring(0, 1).equals((s % 2 == 1 ? "1" : "0")));
         }
     }
 
