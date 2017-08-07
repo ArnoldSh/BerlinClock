@@ -5,7 +5,7 @@ import org.time.data.Bits;
 import java.util.BitSet;
 
 /**
- * Created by mindw on 07.08.2017.
+ * Created by ashamsutdinov on 07.08.2017.
  */
 public class BerlinClockBits implements Bits<BitSet> {
 
