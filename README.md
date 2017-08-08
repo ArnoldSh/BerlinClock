@@ -17,6 +17,6 @@ For running tests also use Gradle task:
 gradle test
 ```
 ## About Berlin Clock
-For comprehension see stolen from Wiki image:
+For comprehension see stolen image from Wiki:
 
 ![alt text](https://github.com/ArnoldSh/TimeCode/blob/master/berlin_clock.gif)
