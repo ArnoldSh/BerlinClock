@@ -18,4 +18,4 @@ gradle test
 ```
 ## About Berlin Clock
 For comprehension see stolen from Wiki image:
-![alt text](http://url/to/img.png)
+![alt text](https://github.com/ArnoldSh/TimeCode/blob/master/berlin_clock.gif)
