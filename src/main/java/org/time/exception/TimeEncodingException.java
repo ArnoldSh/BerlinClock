@@ -1,7 +1,7 @@
 package org.time.exception;
 
 /**
- * Created by ashamsutdinov on 07.08.2017.
+ * Exception occurring while timecode encoding, for example, invalid input time string or time format.
  */
 public class TimeEncodingException extends RuntimeException {
     public TimeEncodingException(String message) {

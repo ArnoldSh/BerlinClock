@@ -1,6 +1,6 @@
 package org.time.core.impl;
 
-import org.time.data.Bits;
+import org.time.code.CodeWrapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,9 +9,6 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by ashamsutdinov on 07.08.2017.
- */
 public class BerlinClockTest {
 
     private final int TEST_ITERATIONS = 100;
@@ -38,9 +35,9 @@ public class BerlinClockTest {
             traceStream.println("expected hours = " + h);
             traceStream.println("expected minutes = " + m);
 
-            Bits<BitSet> bits = instance.encodeTime(h, m, s);
+            CodeWrapper codeWrapper = instance.encodeTime(h, m, s);
 
-            String bBits = bits.toBinaryString();
+            String bBits = codeWrapper.toBinaryString();
 
             int hoursBitsX5  = bBits.substring(1, 5).replaceAll("0", "").length();
             int hoursBitsX1  = bBits.substring(5, 9).replaceAll("0", "").length();
@@ -70,12 +67,12 @@ public class BerlinClockTest {
             int m = random.nextInt(59);
             int s = random.nextInt(59);
 
-            String expectedString = String.format("%02d", h) + ":" + String.format("%02d", m);
+            String expectedString = String.format("%02d", h) + ":" + String.format("%02d", m) + ":00";
 
             traceStream.println("expected time = " + expectedString);
 
-            Bits<BitSet> bits = instance.encodeTime(h, m, s);
-            String resultString = instance.decodeTime(bits);
+            CodeWrapper codeWrapper = instance.encodeTime(h, m, s);
+            String resultString = instance.decodeTime(codeWrapper);
 
             traceStream.println("result time = " + resultString);
 

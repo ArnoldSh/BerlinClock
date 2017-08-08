@@ -1,8 +1,8 @@
 package org.time.core.impl;
 
 import org.time.core.TimeCode;
-import org.time.data.impl.BerlinClockBits;
-import org.time.data.Bits;
+import org.time.code.impl.BerlinClockBits;
+import org.time.code.CodeWrapper;
 import org.time.exception.TimeDecodingException;
 import org.time.exception.TimeEncodingException;
 
@@ -13,10 +13,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * Created by ashamsutdinov on 07.08.2017.
  * Berlin Clock implementation based on BitSet wrapper.
  */
-public class BerlinClock implements TimeCode<BitSet> {
+public class BerlinClock implements TimeCode {
     
     /**
      * Transforms input time in the simple string format HH:mm:ss to Berlin Clock representation as BitSet
@@ -24,7 +23,8 @@ public class BerlinClock implements TimeCode<BitSet> {
      * @return Berlin's time format as BitSet
      * @throws TimeEncodingException if illegal input time string
      */
-    public Bits<BitSet> encodeTime(String time) throws TimeEncodingException {
+    @Override
+    public CodeWrapper encodeTime(String time) throws TimeEncodingException {
         return encodeTime(time, "HH:mm:ss");
     }
     
@@ -34,7 +34,8 @@ public class BerlinClock implements TimeCode<BitSet> {
      * @return Berlin's time format as BitSet
      * @throws TimeEncodingException if illegal input time string or time format
      */
-    public Bits<BitSet> encodeTime(String time, String format) throws TimeEncodingException {
+    @Override
+    public CodeWrapper encodeTime(String time, String format) throws TimeEncodingException {
         try {
             if(format == null) {
                 throw new TimeEncodingException("Invalid input time format");
@@ -60,13 +61,14 @@ public class BerlinClock implements TimeCode<BitSet> {
      * @return Berlin's time format as BitSet
      * @throws TimeEncodingException if illegal input time values
      */
-    public Bits<BitSet> encodeTime(int h, int m, int s) throws TimeEncodingException {
+    @Override
+    public CodeWrapper encodeTime(int h, int m, int s) throws TimeEncodingException {
     
         if(h < 0 || h > 23 || m < 0 || m > 59 || s < 0 || s > 59) { // simple check
             throw new TimeEncodingException("Invalid input time string");
         }
         
-        BitSet bits = new BitSet( // total = 24 lamps
+        BitSet bitSet = new BitSet( // total = 24 lamps
                 1 /* biggest yellow lamp = second's blinker */ +
                     4 + /* big red lamps = 5 hour indicator */
                     4 + /* big red lamps = 1-4 hour indicators */
@@ -74,32 +76,33 @@ public class BerlinClock implements TimeCode<BitSet> {
                     4 /* big yellow lamps = 1-4 minute indicators */
         );
 
-        bits.set(0, s % 2 == 1); // indicates odd second
+        bitSet.set(0, s % 2 == 1); // indicates odd second
     
         int hoursBitsX5 = h / 5; // count of 5-hour red lamps
         int hoursBitsX1 = h % 5; // count of 1-hour red lamps
     
-        bits.set(1, 1 + hoursBitsX5);
-        bits.set(5, 5 + hoursBitsX1);
+        bitSet.set(1, 1 + hoursBitsX5);
+        bitSet.set(5, 5 + hoursBitsX1);
     
         int minutesBitsX5 = m / 5; // the same as hours
         int minutesBitsX1 = m % 5;
     
-        bits.set(9, 9 + minutesBitsX5);
-        bits.set(20, 20 + minutesBitsX1);
+        bitSet.set(9, 9 + minutesBitsX5);
+        bitSet.set(20, 20 + minutesBitsX1);
 
-        return new BerlinClockBits(bits);
+        return new BerlinClockBits(bitSet);
     }
     
     /**
-     * Presents parse bits as string in time format "HH:mm" (without seconds because of data loss)
-     * @param bits input time in BerlinClock format wrapped into BitSet
+     * Presents parse bits as string in time format "HH:mm" (without seconds because of code loss)
+     * @param codeWrapper input time in BerlinClock format wrapped into BitSet
      * @return String human-readable string with time
      * @throws TimeDecodingException if input BitSet is invalid and not supports BerlinClock's format
      */
-    public String decodeTime(Bits<BitSet> bits) throws TimeDecodingException {
+    @Override
+    public String decodeTime(CodeWrapper codeWrapper) throws TimeDecodingException {
 
-        String bBits = bits.toBinaryString();
+        String bBits = codeWrapper.toBinaryString();
         int hoursBitsX5 = bBits.substring(1, 5).replaceAll("0", "").length();
         int hoursBitsX1 = bBits.substring(5, 9).replaceAll("0", "").length();
         int minutesBitsX5 = bBits.substring(9, 20).replaceAll("0", "").length();
@@ -107,20 +110,15 @@ public class BerlinClock implements TimeCode<BitSet> {
         try {
             int h = hoursBitsX5 * 5 + hoursBitsX1;
             int m = minutesBitsX5 * 5 + minutesBitsX1;
-            return String.format("%02d", h) + ":" + String.format("%02d", m);
+            return String.format("%02d", h) + ":" + String.format("%02d", m) + ":00";
         } catch(IndexOutOfBoundsException e) {
             throw new TimeEncodingException("Input BitSet is invalid - bit set is not supports BerlinClock's format");
         }
     }
     
-    public static void main(String[] args) {
-        TimeCode bc = new BerlinClock();
-        Bits<BitSet> bits = bc.encodeTime(23,59,59);
-
-        System.err.println(bits.toBinaryString());
-
-        String time = bc.decodeTime(bits);
-        System.err.println(time);
+    @Override
+    public String decodeTime(CodeWrapper codeWrapper, String format) throws TimeEncodingException {
+        throw new UnsupportedOperationException();
     }
     
 }

@@ -1,7 +1,7 @@
 package org.time.exception;
 
 /**
- * Created by ashamsutdinov on 07.08.2017.
+ * Exception occurring while timecode decoding, for example, invalid input binary code set.
  */
 public class TimeDecodingException extends RuntimeException {
     public TimeDecodingException(String message) {
